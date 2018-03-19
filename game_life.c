@@ -7,21 +7,25 @@
 #define MAX_Y 8
 #endif
 
-// int neighbours;
-// void start_game;
 
 void start_game(short int* board){
-  board[MAX_X*MAX_Y] = 0;
-  board[1*MAX_X+3] = 1;
-  board[1*MAX_X+4] = 1;
-  board[2*MAX_X+3] = 1;
-  board[2*MAX_X+4] = 1;
-  board[1*MAX_X+3] = 1;
-  board[1*MAX_X+4] = 1;
-  board[4*MAX_X+3] = 1;
-  board[6*MAX_X+3] = 1;
-  board[5*MAX_X+2] = 1;
-  board[5*MAX_X+4] = 1;
+  int i,j;
+
+  for(i=0;i<MAX_X;i++){
+    for(j=0;j<MAX_X;j++){
+      if(
+        (i==0 && j==0) || (i==0 && j==1) || (i==1 && j==0) || (i==1 && j==1) ||
+        (i==3 && j==1) || (i==2 && j==2) || (i==1 && j==3) || (i==0 && j==4) ||
+        (i==1 && j==4) || (i==0 && j==5) || (i==1 && j==5) || (i==2 && j==6) ||
+        (i==4 && j==6) || (i==3 && j==7) || (i==7 && j==7) || (i==7 && j==0)
+        ){
+          board[j*MAX_X+i] = 1;
+        }
+      else{
+        board[j*MAX_X+i] = 0;
+      }
+    }
+  }
 }
 
 void print_board(short int* board){
@@ -48,7 +52,7 @@ void print_num_neighbours(int* num_neighbours){
 int* neighbours(short int* board){
   static int num_neighbours[MAX_X*MAX_Y] = {0};
   int i,j;
-  for(i=1;i<MAX_X-1;i++){
+  for(i=1;i<MAX_X-1;i++){ // miolo interno
     for(j=1;j<MAX_X-1;j++){
       num_neighbours[i+MAX_X*j] = board[(i-1)+MAX_X*(j-1)]+board[(i-1)+MAX_X*(j)]+board[(i-1)+MAX_X*(j+1)]+
                        board[(i)+MAX_X*(j-1)]+board[(i)+MAX_X*(j+1)]+
@@ -60,32 +64,32 @@ int* neighbours(short int* board){
   // borda de cima
   j = 0;
   for(i=0;i<MAX_X;i++){
-      num_neighbours[i+MAX_X*j] = board[(i)+MAX_X*(j+1)]+board[(i)+MAX_X*(j)];
+      num_neighbours[i+MAX_X*j] = board[(i)+MAX_X*(j+1)];
       if(i!=0){ // se nao for o canto superior esquerdo
         num_neighbours[i+MAX_X*j] += board[(i-1)+MAX_X*(j)]+board[(i-1)+MAX_X*(j+1)];
       }
-      if(i!=MAX_X){// se nao for o canto superior direito
+      if(i!=MAX_X-1){// se nao for o canto superior direito
         num_neighbours[i+MAX_X*j] += board[(i+1)+MAX_X*(j)]+board[(i+1)+MAX_X*(j+1)];
       }
   }
   // borda de baixo
   j = MAX_Y-1;
   for(i=0;i<MAX_X;i++){
-      num_neighbours[i+MAX_X*j] = board[(i)+MAX_X*(j-1)]+board[(i)+MAX_X*(j)];
+      num_neighbours[i+MAX_X*j] = board[(i)+MAX_X*(j-1)];
       if(i!=0){ // se nao for o canto inferior esquerdo
         num_neighbours[i+MAX_X*j] += board[(i-1)+MAX_X*(j)]+board[(i-1)+MAX_X*(j-1)];
       }
-      if(i!=MAX_X){// se nao for o canto inferior direito
+      if(i!=MAX_X-1){// se nao for o canto inferior direito
         num_neighbours[i+MAX_X*j] += board[(i+1)+MAX_X*(j)]+board[(i+1)+MAX_X*(j-1)];
       }
   }
-  //borda da esquerda
+  //borda da esquerda sem as pontas
   i = 0;
   for(j=1;j<MAX_X-1;j++){
     num_neighbours[i+MAX_X*j] =  board[(i)+MAX_X*(j-1)]+board[(i)+MAX_X*(j+1)]+
                      board[(i+1)+MAX_X*(j-1)]+board[(i+1)+MAX_X*(j)]+board[(i+1)+MAX_X*(j+1)];
   }
-  //borda da direita
+  //borda da direita sem as pontas
   i = MAX_X-1;
   for(j=1;j<MAX_X-1;j++){
     num_neighbours[i+MAX_X*j] =  board[(i-1)+MAX_X*(j-1)]+board[(i-1)+MAX_X*(j)]+board[(i-1)+MAX_X*(j+1)]+
@@ -99,8 +103,8 @@ void run_step(short int* board_current,short int* board_next){
   int* neighbours_array = malloc(sizeof(int)*sizeof(board_current)/sizeof(short int));
   neighbours_array = neighbours(board_current);
   int i,j;
-  for(i=1;i<MAX_X-1;i++){
-    for(j=1;j<MAX_X-1;j++){
+  for(i=0;i<MAX_X;i++){
+    for(j=0;j<MAX_X;j++){
       if(neighbours_array[i+MAX_X*j]==3 ){
         board_next[i+MAX_X*j] = 1;
       }
@@ -117,7 +121,6 @@ void run_step(short int* board_current,short int* board_next){
 }
 
 int main(int argc,char** argv){
-  printf("Teste");
   short int *board_current,*board_next;
   board_current = malloc(MAX_X*MAX_Y*sizeof(short int));
   board_next = malloc(MAX_X*MAX_Y*sizeof(short int));
