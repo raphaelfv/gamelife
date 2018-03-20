@@ -14,10 +14,10 @@ void start_game(short int* board){
   for(i=0;i<MAX_X;i++){
     for(j=0;j<MAX_X;j++){
       if(
-        (i==0 && j==0) || (i==0 && j==1) || (i==1 && j==0) || (i==1 && j==1) ||
-        (i==3 && j==1) || (i==2 && j==2) || (i==1 && j==3) || (i==0 && j==4) ||
-        (i==1 && j==4) || (i==0 && j==5) || (i==1 && j==5) || (i==2 && j==6) ||
-        (i==4 && j==6) || (i==3 && j==7) || (i==7 && j==7) || (i==7 && j==0)
+        (i==1 && j==3) || (i==2 && j==2) || (i==2 && j==4) || (i==3 && j==1) ||
+        (i==3 && j==3) || (i==3 && j==5) || (i==4 && j==3) || (i==5 && j==0) ||
+        (i==5 && j==1) || (i==5 && j==3) || (i==5 && j==5) || (i==5 && j==6) ||
+        (i==6 && j==3) || (i==7 && j==2) || (i==7 && j==4)
         ){
           board[j*MAX_X+i] = 1;
         }
@@ -32,8 +32,8 @@ void print_board(short int* board){
   int i;
   for(i=0;i<MAX_X*MAX_Y;i++){
     if(i%MAX_X == 0)
-    printf("\n");
-      printf("%d\t",board[i]);
+      printf("\n");
+    printf("%d\t",board[i]);
   }
   printf("\n");
 }
@@ -126,6 +126,7 @@ int main(int argc,char** argv){
   board_next = malloc(MAX_X*MAX_Y*sizeof(short int));
   start_game(board_current);
   print_board(board_current);
+  run_step(board_current,board_next);
   run_step(board_current,board_next);
   printf("------------------ Passo 1 --------------");
   print_board(board_next);
